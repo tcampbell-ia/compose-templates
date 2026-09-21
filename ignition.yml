@@ -1,0 +1,31 @@
+services:
+  gw:
+    image: inductiveautomation/ignition:${GW_VERSION}
+    volumes:
+      - gw-data:/usr/local/bin/ignition/data
+    networks:
+      traefik: null
+    environment:
+      - ACCEPT_IGNITION_EULA=Y
+      - GATEWAY_ADMIN_USERNAME=${GW_ADMIN_USER:-a}
+      - GATEWAY_ADMIN_PASSWORD=${GW_ADMIN_PASS:-p}
+      - IGNITION_EDITION=standard
+      - TZ=Australia/Brisbane
+    command: >
+      -n ${GW_NAME:-gw} -m 1024 -- wrapper.java.initmemory=512
+      -Dignition.allowunsignedmodules=true
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik
+      # Web ui
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-web.entrypoints=web
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-web.rule=Host(`${COMPOSE_PROJECT_NAME}-gw.localtest.me`)
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-web.service=${COMPOSE_PROJECT_NAME}-web-svc
+      - traefik.http.services.${COMPOSE_PROJECT_NAME}-web-svc.loadbalancer.server.port=8088
+
+networks:
+  traefik:
+    external: true
+volumes:
+  gw-data:
+    name: ${COMPOSE_PROJECT_NAME}-gw-data

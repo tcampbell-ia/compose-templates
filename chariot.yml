@@ -1,0 +1,14 @@
+services:
+  chariot:
+    image: cirruslink/chariot:latest
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+      - "1883:1883"
+      - "8883:8883"
+      - "8090:8090"
+      - "8091:8091"
+    environment:
+      ACCEPT_EULA: "true"
+      ADMIN_PASSWORD: "mypassword"
+    restart: unless-stopped

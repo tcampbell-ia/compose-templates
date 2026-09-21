@@ -1,0 +1,33 @@
+services:
+  # Traefik
+  traefik:
+    image: traefik:v3.7
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.network=traefik"
+      - "--providers.docker.exposedByDefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      traefik:
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.whoami.entrypoints=web
+      - traefik.http.routers.whoami.rule=Host(`traefik.localhost`)
+      - traefik.http.routers.traefik.service=traefik
+      - traefik.http.services.traefik.loadbalancer.server.port=8080
+networks:
+  traefik:
+    external: true
+
+  #whoami:
+  #  image: "traefik/whoami"
+  #  restart: unless-stopped
+  #  labels:
+  #    - "traefik.enable=true"
+  #    - "traefik.http.routers.whoami.rule=Host(`whoami.docker.localhost`)"
+  #    - "traefik.http.routers.whoami.entrypoints=web"

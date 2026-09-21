@@ -1,0 +1,16 @@
+services:
+  # MySQL
+  mysql:
+    image: mysql
+    hostname: MySQL
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-password}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-password}
+      MYSQL_USER: ${DB_USERNAME:-ignition}
+      MYSQL_DATABASE: ${DB_NAME:-MySQL}
+    ports:
+     - ${DB_PORT:-33306}:3306
+    volumes:
+      - mysql-data:/var/lib/mysql1/data
+volumes:
+  mysql-data:
