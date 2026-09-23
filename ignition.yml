@@ -12,7 +12,7 @@ services:
       - IGNITION_EDITION=standard
       - TZ=Australia/Brisbane
     command: >
-      -n ${GW_NAME:-gw} -m 1024 -- wrapper.java.initmemory=512
+      -n ${COMPOSE_PROJECT_NAME}-gw -m 1024 -- wrapper.java.initmemory=512
       -Dignition.allowunsignedmodules=true
     labels:
       - traefik.enable=true
