@@ -17,7 +17,6 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik
-      # Web ui
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-web.entrypoints=web
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-web.rule=Host(`${COMPOSE_PROJECT_NAME}-gw.localtest.me`)
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-web.service=${COMPOSE_PROJECT_NAME}-web-svc
