@@ -1,0 +1,16 @@
+services:
+  cloudbeaver:
+    image: dbeaver/cloudbeaver:latest
+    container_name: cloudbeaver
+    restart: unless-stopped
+    networks:
+      traefik:
+    volumes:
+      - cloudbeaver-data:/opt/cloudbeaver/workspace
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-cloudbeaver.entrypoints=web
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-web.rule=Host(`${COMPOSE_PROJECT_NAME}-cloudbeaver.localtest.me`)
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-web.service=${COMPOSE_PROJECT_NAME}-cloudbeaver-svc
+      - traefik.http.services.${COMPOSE_PROJECT_NAME}-cloudbeaver-svc.loadbalancer.server.port=8978

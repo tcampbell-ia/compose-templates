@@ -10,9 +10,3 @@ services:
       - SmtpServer__Port=2525
       - Urls=http://0.0.0.0:8080
     restart: unless-stopped
-    networks:
-      papercut:
-        aliases:
-          - papercut
-networks:
-  papercut:

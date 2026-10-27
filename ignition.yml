@@ -9,11 +9,12 @@ services:
       - ACCEPT_IGNITION_EULA=Y
       - GATEWAY_ADMIN_USERNAME=${GW_ADMIN_USER:-a}
       - GATEWAY_ADMIN_PASSWORD=${GW_ADMIN_PASS:-p}
-      - IGNITION_EDITION=standard
+      - IGNITION_EDITION=${IGN_EDITION:-standard}
+      - DISABLE_QUICKSTART=true
       - TZ=Australia/Brisbane
     command: >
       -n ${COMPOSE_PROJECT_NAME}-gw -m 1024 -- wrapper.java.initmemory=512
-      -Dignition.allowunsignedmodules=true
+      -Dignition.allowunsignedmodules=true -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik

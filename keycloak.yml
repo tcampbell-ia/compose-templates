@@ -1,0 +1,50 @@
+services:
+  keycloakdb:
+    image: postgres:16
+    networks:
+      net:
+        aliases:
+          - keycloakdb
+    volumes:
+      - keycloak_postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U keycloak"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.7.3
+    command: start-dev
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: password
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloakdb:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: password
+    networks:
+      traefik: null
+      net: null
+    depends_on:
+      keycloakdb:
+        condition: service_healthy
+    labels:
+    - traefik.enable=true
+    - traefik.docker.network=traefik
+    - traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.entrypoints=web
+    - traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.rule=Host(`${COMPOSE_PROJECT_NAME}-keycloak.localtest.me`)
+    - traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.service=${COMPOSE_PROJECT_NAME}-keycloak-svc
+    - traefik.http.services.${COMPOSE_PROJECT_NAME}-keycloak-svc.loadbalancer.server.port=8080
+
+volumes:
+  keycloak_postgres_data:
+networks:
+  traefik:
+    external: true
+  net:
+    name: ${COMPOSE_PROJECT_NAME}-net
